@@ -34,6 +34,8 @@ COPY scripts/ /usr/local/bin
 
 RUN chmod +x /usr/local/bin/reload.sh
 
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer 
+
 CMD [ "/usr/local/bin/containerpilot", \
     "php-fpm", \
         "--nodaemonize"]
