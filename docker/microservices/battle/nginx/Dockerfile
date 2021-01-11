@@ -1,14 +1,11 @@
-FROM php:7.4-fpm
+FROM nginx:stable
 
-RUN apt-get update && apt-get -y install  libonig-dev \
-        apt-utils git g++ libcurl4-gnutls-dev libicu-dev libmcrypt-dev libpq-dev libxml2-dev unzip zlib1g-dev \
-    && git clone -b develop https://github.com/phpredis/phpredis.git /usr/src/php/ext/redis \
-    && docker-php-ext-install curl intl json mbstring pdo pdo_pgsql redis xml \
-    && apt-get -y autoremove && apt-get -y autoclean \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        bc \
+        curl \
+        unzip \
     && rm -rf /var/lib/apt/lists/*
-
-RUN echo 'date.timezone="Europe/Madrid"' >>  /usr/local/etc/php/conf.d/date.ini
-RUN echo 'session.save_path = "/tmp"' >>  /usr/local/etc/php/conf.d/session.ini
 
 ENV CONSUL_TEMPLATE_VERSION 0.16.0
 ENV CONSUL_TEMPLATE_SHA1 064b0b492bb7ca3663811d297436a4bbf3226de706d2b76adade7021cd22e156
@@ -33,10 +30,9 @@ COPY config/ /etc
 COPY scripts/ /usr/local/bin
 
 RUN chmod +x /usr/local/bin/reload.sh
-
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
-&& composer require --dev phpunit/phpunit 
+RUN chmod +x /usr/local/bin/sensor.sh
 
 CMD [ "/usr/local/bin/containerpilot", \
-    "php-fpm", \
-        "--nodaemonize"]
+    "nginx", \
+        "-g", \
+        "daemon off;"]
