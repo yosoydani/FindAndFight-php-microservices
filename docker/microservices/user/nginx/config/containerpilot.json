@@ -4,7 +4,7 @@
     "logging": {"level": "DEBUG"},
     "services": [
         {
-            "name": "microservice-battle-nginx",
+            "name": "microservice-user-nginx",
             "port": 80,
             "health": "/usr/bin/curl --fail --silent --show-error --output /dev/null http://localhost/nginx-health",
             "poll": 10,
